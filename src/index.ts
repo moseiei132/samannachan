@@ -136,6 +136,8 @@ app.post('/login', async (req: Request, res: Response) => {
     data: {
       accessToken,
       username: user.username,
+      userType: user.type,
+      userId: user.userId,
     },
   })
 })
