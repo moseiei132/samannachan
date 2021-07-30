@@ -16,8 +16,7 @@ export class OrderDetail {
 
   @Column({ name: 'id_order' })
   orderID: number
-  
+
   @Column({ name: 'id_user' })
   userID: number
-
 }

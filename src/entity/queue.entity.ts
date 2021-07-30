@@ -10,6 +10,4 @@ export class Queue {
 
   @Column({ name: 'id_user' })
   userID: number
-
-
 }

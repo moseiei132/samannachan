@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity('orders')
-export class Orders {
+export class Order {
   @PrimaryGeneratedColumn({ name: 'order_id' })
   orderId?: number
 
@@ -10,6 +10,4 @@ export class Orders {
 
   @Column({ name: 'sum_price' })
   price: string
-
-
 }

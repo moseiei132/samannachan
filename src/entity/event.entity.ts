@@ -1,16 +1,16 @@
-import {Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity('event')
 export class Event {
-    @PrimaryGeneratedColumn({ name: 'id_enemt' })
-    eventId?: number
+  @PrimaryGeneratedColumn({ name: 'id_event' })
+  eventId?: number
 
-    @Column({ name: 'name_event' })
-    name: string
+  @Column({ name: 'name_event' })
+  name: string
 
-    @Column({ name: 'start' })
-    startDate: Date
+  @Column({ name: 'start' })
+  startDate: Date
 
-    @Column({ name: 'end' })
-    endDate: Date
-} 
+  @Column({ name: 'end' })
+  endDate: Date
+}
