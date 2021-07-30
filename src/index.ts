@@ -14,6 +14,7 @@ import * as multer from 'multer'
 import { v4 as uuidv4 } from 'uuid'
 import { CheckTokenData } from './class/check-access.class'
 import * as bcrypt from 'bcrypt'
+import e = require('express')
 
 const app: Application = express()
 
@@ -52,21 +53,24 @@ async function checkAccessToken(accessToken: string) {
     if (!refreshTokenData) {
       returnData.status = false
       returnData.message = 'refreshToken not found'
+    } else {
+      const dateNow = new Date()
+      if (dateNow > refreshTokenData.expire) {
+        returnData.status = false
+        returnData.message = 'refreshToken expire'
+      } else {
+        refreshTokenData.expire.setDate(new Date().getDate() + 1)
+        await getCustomRepository(RefreshTokenRepository).save(refreshTokenData)
+        const userDB = await getCustomRepository(UserRepository).findOne({
+          userId: jwtData.userId,
+        })
+        returnData.data = userDB
+      }
     }
-    const dateNow = new Date()
-    if (dateNow > refreshTokenData.expire) {
-      returnData.status = false
-      returnData.message = 'refreshToken expire'
-    }
-    refreshTokenData.expire.setDate(new Date().getDate() + 1)
   } catch {
     returnData.status = false
     returnData.message = 'invalid accessToken'
   }
-  const userDB = await getCustomRepository(UserRepository).findOne({
-    userId: jwtData.userId,
-  })
-  returnData.data = userDB
   return returnData
 }
 
