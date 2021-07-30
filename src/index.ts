@@ -82,7 +82,7 @@ app.post('/register', async (req: Request, res: Response) => {
   user.tel = req.body['tel']
   user.type = 'user'
 
-  const userDB = getCustomRepository(UserRepository).findOne({
+  const userDB = await getCustomRepository(UserRepository).findOne({
     username: user.username,
   })
   if (userDB) return res.send('User already in use')
