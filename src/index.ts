@@ -63,7 +63,10 @@ async function checkAccessToken(accessToken: string) {
     returnData.status = false
     returnData.message = 'invalid accessToken'
   }
-  returnData.data = jwtData
+  const userDB = await getCustomRepository(UserRepository).findOne({
+    userId: jwtData.userId,
+  })
+  returnData.data = userDB
   return returnData
 }
 
@@ -136,6 +139,8 @@ app.post('/login', async (req: Request, res: Response) => {
     data: {
       accessToken,
       username: user.username,
+      userType: user.type,
+      userId: user.userId,
     },
   })
 })
@@ -150,6 +155,19 @@ app.post(
   '/addFood',
   upload.single('pic'),
   async (req: Request, res: Response) => {
+    const accessToken = req.body['accessToken']
+    const userData = await checkAccessToken(accessToken)
+    if (userData.status === false)
+      res.send({
+        status: false,
+        message: 'Invalid accessToken',
+      })
+    else if (userData.data.type === 'user')
+      res.send({
+        status: false,
+        message: 'You not have admin',
+      })
+
     const imageFile: Express.Multer.File = req.file
     const food = new Food()
     food.name = req.body['foodName']
