@@ -179,7 +179,10 @@ app.post(
     food.typeId = req.body['foodTypeId']
     food.img = imageFile.path
     await getCustomRepository(FoodRepository).save(food)
-    res.send(true)
+    res.send({
+      status: true,
+      message: 'Add food success',
+    })
   },
 )
 
