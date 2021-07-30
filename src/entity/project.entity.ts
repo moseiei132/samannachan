@@ -3,7 +3,7 @@ import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm'
 @Entity('project')
 export class Project {
   @PrimaryGeneratedColumn({ name: 'id_project' })
-  projectId?: number
+  id?: number
 
   @Column({ name: 'name_project' })
   name: string
@@ -15,7 +15,7 @@ export class Project {
   qty: number
 
   @Column({ name: 'id_user' })
-  userID: number
+  userId: number
 
   @Column({ name: 'project_img' })
   img: string

@@ -11,10 +11,8 @@ import { Food } from './entity/food.entity'
 import { FoodRepository } from './repositories/food.repository'
 import { json, urlencoded } from 'body-parser'
 import * as multer from 'multer'
-// ppp
+import { v4 as uuidv4 } from 'uuid'
 
-require('dotenv').config()
-const { v4: uuidv4 } = require('uuid')
 const app: Application = express()
 
 app.use(urlencoded({ extended: true, limit: '50mb' }))
@@ -38,25 +36,7 @@ const storage = multer.diskStorage({
 })
 var upload = multer({ storage })
 
-createConnection({
-  name: 'default',
-  type: 'mysql',
-  host: process.env.DB_HOST,
-  port: Number(process.env.DB_PORT),
-  username: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME,
-  synchronize: false,
-  logging: false,
-  entities: ['src/entity/**/*.ts'],
-  migrations: ['src/migration/**/*.ts'],
-  subscribers: ['src/subscriber/**/*.ts'],
-  cli: {
-    entitiesDir: 'src/entity',
-    migrationsDir: 'src/migration',
-    subscribersDir: 'src/subscriber',
-  },
-})
+createConnection()
 
 async function checkAccessToken(accessToken: string) {
   try {

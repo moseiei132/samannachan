@@ -6,8 +6,5 @@ export class Queue {
   queue?: number
 
   @Column({ name: 'order_id' })
-  orderID: number
-
-  @Column({ name: 'id_user' })
-  userID: number
+  orderId: number
 }

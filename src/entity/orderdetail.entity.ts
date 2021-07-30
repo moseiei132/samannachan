@@ -3,10 +3,10 @@ import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm'
 @Entity('orderdetail')
 export class OrderDetail {
   @PrimaryGeneratedColumn({ name: 'id_preorder' })
-  DetailId?: number
+  id?: number
 
   @Column({ name: 'id_food' })
-  foodID: number
+  foodId: number
 
   @Column()
   qty: number
@@ -15,8 +15,8 @@ export class OrderDetail {
   price: number
 
   @Column({ name: 'id_order' })
-  orderID: number
+  orderId: number
 
   @Column({ name: 'id_user' })
-  userID: number
+  userId: number
 }
