@@ -12,6 +12,8 @@ import { FoodRepository } from './repositories/food.repository'
 import { json, urlencoded } from 'body-parser'
 import * as multer from 'multer'
 import { v4 as uuidv4 } from 'uuid'
+import { CheckTokenData } from './class/check-access.class'
+import * as bcrypt from 'bcrypt'
 
 const app: Application = express()
 
@@ -39,19 +41,30 @@ var upload = multer({ storage })
 createConnection()
 
 async function checkAccessToken(accessToken: string) {
+  const returnData = new CheckTokenData()
+  returnData.status = true
+  let jwtData = null
   try {
-    const jwtData = jwt.verify(accessToken, process.env.JWT_KEY)
+    jwtData = jwt.verify(accessToken, process.env.JWT_KEY)
     const refreshTokenData = await getCustomRepository(
       RefreshTokenRepository,
     ).findOne({ refreshToken: jwtData.refreshToken })
-    if (!refreshTokenData) return 'refreshToken not found'
+    if (!refreshTokenData) {
+      returnData.status = false
+      returnData.message = 'refreshToken not found'
+    }
     const dateNow = new Date()
-    if (dateNow > refreshTokenData.expire) return 'refreshToken expire'
+    if (dateNow > refreshTokenData.expire) {
+      returnData.status = false
+      returnData.message = 'refreshToken expire'
+    }
     refreshTokenData.expire.setDate(new Date().getDate() + 1)
-    return jwtData
   } catch {
-    return 'invalid accessToken'
+    returnData.status = false
+    returnData.message = 'invalid accessToken'
   }
+  returnData.data = jwtData
+  return returnData
 }
 
 app.get('/allUser', async (req: Request, res: Response) => {
@@ -73,6 +86,8 @@ app.post('/register', async (req: Request, res: Response) => {
     username: user.username,
   })
   if (userDB) return res.send('User already in use')
+
+  user.password = await bcrypt.hash(user.password, 10)
   await getCustomRepository(UserRepository).save(user)
   res.send('success')
 })
@@ -84,7 +99,17 @@ app.post('/login', async (req: Request, res: Response) => {
   const user = await getCustomRepository(UserRepository).findOne({
     username: data.username,
   })
-  if (!user) return res.send('User not found')
+  if (!user)
+    return res.send({
+      status: false,
+      message: 'User not found',
+    })
+  const isMath = await bcrypt.compare(data.password, user.password)
+  if (!isMath)
+    res.send({
+      status: false,
+      message: 'Incorrect password',
+    })
   const refreshToken = uuidv4()
   const accessToken = await jwt.sign(
     {
@@ -99,7 +124,13 @@ app.post('/login', async (req: Request, res: Response) => {
     refreshToken,
     expire: date,
   })
-  res.send(accessToken)
+  res.send({
+    status: true,
+    data: {
+      accessToken,
+      username: user.username,
+    },
+  })
 })
 
 app.post('/check', async (req: Request, res: Response) => {
