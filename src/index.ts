@@ -166,7 +166,7 @@ app.post(
         status: false,
         message: 'Invalid accessToken',
       })
-    else if (userData.data.type === 'user')
+    else if (userData.data.type !== 'admin')
       res.send({
         status: false,
         message: 'You not have admin',
