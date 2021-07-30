@@ -85,11 +85,18 @@ app.post('/register', async (req: Request, res: Response) => {
   const userDB = await getCustomRepository(UserRepository).findOne({
     username: user.username,
   })
-  if (userDB) return res.send('User already in use')
+  if (userDB)
+    return res.send({
+      message: 'User already in use',
+      status: false,
+    })
 
   user.password = await bcrypt.hash(user.password, 10)
   await getCustomRepository(UserRepository).save(user)
-  res.send('success')
+  res.send({
+    status: true,
+    message: 'success',
+  })
 })
 
 app.post('/login', async (req: Request, res: Response) => {
